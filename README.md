@@ -33,7 +33,7 @@ Prompt baking requires four steps:
 3. Collation
 4. Bake
 
-Read more about what each stage of the bake process does on our docs: [What is Baking?] (https://breadtechnologiesinc.mintlify.app/understanding-baking#what-is-baking%3F)
+Read more about what each stage of the bake process does on our docs: [What is Baking?](https://breadtechnologiesinc.mintlify.app/understanding-baking#what-is-baking%3F)
 
 # Example Code of Running a Bake
 
