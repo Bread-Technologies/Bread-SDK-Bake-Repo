@@ -1,13 +1,15 @@
 # Git for Weight Space
 Git for Weight Space is a developer platform that lets you ship custom AI models as easily as commiting code. A version control system (like Git!) that lets you form your own branching tree of AI models. Fork, create, and combine prompts to make AI models.
 
-Learn more from our official documentation.
+Learn more from our official [documentation](https://breadtechnologiesinc.mintlify.app/).
 
 # Get Started
 1. Install the Bread Python SDK:
 `pip install git+ssh://git@github.com/stainless-sdks/bread-sdk-v1-python.git`
 
-2. Get your Bread API key (via aibread.com) and set it:
+2. Get your Bread API key (via aibread.com) and set it in the `.env`:
+`cp .env.example .env`
+or, set the key manually in the shell:
 `export BREAD_API_KEY="sk-your-api-key"`
 
 3. Initialize the Client:
@@ -31,7 +33,7 @@ Prompt baking requires four steps:
 3. Collation
 4. Bake
 
-Read more about what each stage of the bake process does on our docs: (doc link here for what is baking)
+Read more about what each stage of the bake process does on our docs: [What is Baking?] (https://breadtechnologiesinc.mintlify.app/understanding-baking#what-is-baking%3F)
 
 # Example Code of Running a Bake
 
