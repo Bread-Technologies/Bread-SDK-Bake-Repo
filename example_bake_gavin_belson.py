@@ -235,14 +235,14 @@ except Exception as e:
 log("Configuring bake...")
 try:
     bake = client.bakes.set(
-        model_name="Qwen/Qwen3-32B",
         bake_name=BAKE_NAME,
         repo_name=REPO_NAME,
         template="default",
         overrides={
             "datasets": [
                 {"target": TARGET_NAME, "weight": 1.0}
-            ]
+            ],
+            "model_name": "Qwen/Qwen3-32B"
         }
     )
     log(f"Bake '{BAKE_NAME}' configured successfully", "SUCCESS")
