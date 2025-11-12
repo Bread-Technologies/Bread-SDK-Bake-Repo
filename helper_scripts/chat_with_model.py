@@ -8,6 +8,7 @@ dotenv.load_dotenv()
 # ============ CONFIGURATION ============
 BREAD_API_KEY = os.environ.get("BREAD_API_KEY", "sk-your-api-key")
 MODEL_NAME = "Qwen/Qwen3-32B"  # Format: repo_name/bake_name
+ENABLE_THINKING = False  # Set to True to enable Qwen's thinking mode
 # =======================================
 
 # API endpoint
@@ -64,6 +65,14 @@ def chat_with_model():
             "temperature": 0.7,
             "stream": True
         }
+        
+        # Add thinking mode configuration for Qwen models
+        if not ENABLE_THINKING:
+            payload["extra_body"] = {
+                "chat_template_kwargs": {
+                    "enable_thinking": False
+                }
+            }
         
         try:
             # Make streaming API request
