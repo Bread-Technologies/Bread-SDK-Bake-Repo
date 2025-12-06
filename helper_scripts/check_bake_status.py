@@ -10,7 +10,10 @@ Before running this script:
 """
 
 import os
+import dotenv
 from aibread import Bread
+
+dotenv.load_dotenv()
 
 # ============ CONFIGURATION ============
 REPO_NAME = "your_repo_name"

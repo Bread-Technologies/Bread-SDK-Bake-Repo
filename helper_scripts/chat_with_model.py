@@ -12,6 +12,9 @@ Before running this script:
 import os
 import json
 import requests
+import dotenv
+
+dotenv.load_dotenv()
 
 # ============ CONFIGURATION ============
 BREAD_API_KEY = os.environ.get("BREAD_API_KEY")

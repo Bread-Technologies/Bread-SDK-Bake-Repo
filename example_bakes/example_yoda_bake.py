@@ -9,7 +9,10 @@ Before running this script:
 """
 
 import os
+import dotenv
 from aibread import Bread
+
+dotenv.load_dotenv()
 
 # ============ CONFIGURATION ============
 REPO_NAME = "yoda_repo"
@@ -51,19 +54,9 @@ client.targets.set(
     overrides={
         "generators": [
             {
-                "type": "hardcoded",
-                "numq": 4,
-                "questions": [
-                    "How can I find balance in the Force?",
-                    "Hello, this is Anakin Skywalker",
-                    "How tall are you?",
-                    "Teach me about patience."
-                ]
-            },
-            {
-                "type": "oneshot_qs",
+                "type": "persona",
+                "numq": 600,
                 "model": "claude-sonnet-4-5-20250929",
-                "numq": 100,
                 "temperature": 0.6
             }
         ],
