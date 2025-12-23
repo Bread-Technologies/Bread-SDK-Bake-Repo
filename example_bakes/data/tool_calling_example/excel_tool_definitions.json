@@ -1,0 +1,3364 @@
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_load_workbook",
+        "description": "[OPENPYXL] Load Excel file into memory, preserving ALL formatting, formulas, charts, and images. \u26a0\ufe0f STATE CHANGE: Opens workbook and keeps it in memory for subsequent operations. \u26a0\ufe0f BEST PRACTICE: Always check if workbook is already open before loading (use openpyxl_check_workbook_status). \u26a0\ufe0f BRIDGE TOOLS: Do NOT use read_only=True or data_only=True if you plan to use bridge_openpyxl_to_pandas - it requires a writable workbook. USE WHEN: need to preserve formatting, work with charts/images, or modify existing styled files. NOT FOR: bulk data analysis (use pandas_read_excel instead). NOTE: After pandas analysis, save with pandas_to_excel then reload here for formatting. WORKFLOW: pandas_to_excel('temp.xlsx') \u2192 load_workbook('temp.xlsx') \u2192 apply styles \u2192 save('final.xlsx')",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "type": "string",
+              "description": "Path to the Excel file"
+            },
+            "read_only": {
+              "type": "string",
+              "description": "Open file in read-only mode (faster for large files)",
+              "default": false
+            },
+            "keep_vba": {
+              "type": "string",
+              "description": "Preserve VBA macros when loading file",
+              "default": false
+            },
+            "data_only": {
+              "type": "string",
+              "description": "Read values instead of formulas",
+              "default": false
+            },
+            "keep_links": {
+              "type": "string",
+              "description": "Preserve external links",
+              "default": true
+            },
+            "rich_text": {
+              "type": "string",
+              "description": "rich_text parameter",
+              "default": false
+            }
+          },
+          "required": [
+            "filename"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook",
+        "description": "[OPENPYXL] Workbook is the container for all other parts of the document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "write_only": {
+              "type": "string",
+              "description": "write_only parameter",
+              "default": false
+            },
+            "iso_dates": {
+              "type": "string",
+              "description": "iso_dates parameter",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_get_column_letter",
+        "description": "[OPENPYXL] Convert decimal column position to its ASCII (base 26) form. Because column indices are 1-based, strides are actually pow(26, n) + 26",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "col_idx": {
+              "type": "string",
+              "description": "Column reference or index"
+            }
+          },
+          "required": [
+            "col_idx"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_column_index_from_string",
+        "description": "[OPENPYXL] Convert ASCII column name (base 26) to decimal with 1-based index Characters represent descending multiples of powers of 26",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "col": {
+              "type": "string",
+              "description": "Column reference or index"
+            }
+          },
+          "required": [
+            "col"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_coordinate_to_tuple",
+        "description": "[OPENPYXL] Convert an Excel style coordinate to (row, column) tuple",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "coordinate": {
+              "type": "string",
+              "description": "Cell reference (e.g., \"A1\")"
+            }
+          },
+          "required": [
+            "coordinate"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_range_boundaries",
+        "description": "[OPENPYXL] Convert a range string into a tuple of boundaries: (min_col, min_row, max_col, max_row)",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "range_string": {
+              "type": "string",
+              "description": "Range reference (e.g., \"A1:B10\")"
+            }
+          },
+          "required": [
+            "range_string"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_save",
+        "description": "[OPENPYXL] Save workbook with all formatting, charts, and Excel features intact. \u26a0\ufe0f REQUIRES: Active workbook must be loaded in memory. Use openpyxl_check_workbook_status to verify before calling. \u26a0\ufe0f STATE PRESERVATION: Does NOT close the workbook after saving - workbook remains in memory. \u26a0\ufe0f ERROR PREVENTION: If workbook is closed, this will fail and may corrupt the output file. WARNING: Formulas are saved but NOT calculated - values will be NaN in pandas! To calculate formulas, use bridge_openpyxl_to_pandas after saving. USE WHEN: you need professional formatting, charts, conditional formatting. WORKFLOW: After adding formulas \u2192 save \u2192 bridge_openpyxl_to_pandas for calculated values.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "type": "string",
+              "description": "Path to the Excel file"
+            }
+          },
+          "required": [
+            "filename"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_close",
+        "description": "[OPENPYXL] Close workbook and release file handle. \u26a0\ufe0f STATE CHANGE: Closes workbook in memory - subsequent operations will fail until you load again. \u26a0\ufe0f WARNING: Does NOT automatically save. Call openpyxl_workbook_save first if you have unsaved changes. \u26a0\ufe0f FILE LOCK: Always close before switching to pandas operations on the same file. USE WHEN: Done with openpyxl operations and need to free file handle. WORKFLOW: save \u2192 close \u2192 then safe to use pandas on same file.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_check_workbook_status",
+        "description": "[OPENPYXL] Check if a workbook is currently loaded in memory. USE WHEN: before attempting operations that require an open workbook, or to verify state after errors. Returns: workbook status, active sheet name if open, list of sheets, filename, and unsaved changes status.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_create_sheet",
+        "description": "[OPENPYXL] Create a worksheet (at an optional index).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Name for the new worksheet"
+            },
+            "index": {
+              "type": "integer",
+              "description": "Position where sheet should be inserted (0-based integer, e.g., 0 for first position)"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_remove",
+        "description": "[OPENPYXL] Remove `worksheet` from this workbook.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sheet": {
+              "type": "string",
+              "description": "Worksheet object to operate on"
+            }
+          },
+          "required": [
+            "sheet"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_copy_worksheet",
+        "description": "[OPENPYXL] Copy an existing worksheet in the current workbook .. warning::",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "from_worksheet": {
+              "type": "string",
+              "description": "Source worksheet to copy from"
+            }
+          },
+          "required": [
+            "from_worksheet"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_get_item",
+        "description": "[OPENPYXL] Access Workbook item by key or index. Use this to select/switch to a specific worksheet by name (e.g., 'Sheet1'). Only needed if you want to work with a different sheet than the currently active one.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "key parameter"
+            }
+          },
+          "required": [
+            "key"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_list_sheets",
+        "description": "[OPENPYXL] List all sheet names in the workbook. USE WHEN: discovering available worksheets, checking sheet existence before operations, or understanding workbook structure. Returns ordered list of sheet names with active sheet indicated.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_append",
+        "description": "[OPENPYXL] Append a row of values at the bottom of worksheet. USE WHEN: adding formatted rows one at a time, preserving cell styles. SLOW FOR: bulk data insertion with thousands of rows (use pandas_concat or pandas_to_excel for large datasets).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "iterable": {
+              "type": "string",
+              "description": "List or tuple of values to append as a row"
+            }
+          },
+          "required": [
+            "iterable"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_insert_rows",
+        "description": "[OPENPYXL] Insert row or rows before row==idx",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "idx": {
+              "type": "string",
+              "description": "Index position for insertion/deletion"
+            },
+            "amount": {
+              "type": "string",
+              "description": "Number of rows/columns to insert/delete",
+              "default": 1
+            }
+          },
+          "required": [
+            "idx"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_delete_rows",
+        "description": "[OPENPYXL] Delete row or rows from worksheet structure. USE WHEN: removing empty rows or adjusting sheet layout. SLOW FOR: filtering data based on conditions (use pandas_query or pandas_drop for data filtering).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "idx": {
+              "type": "string",
+              "description": "Index position for insertion/deletion"
+            },
+            "amount": {
+              "type": "string",
+              "description": "Number of rows/columns to insert/delete",
+              "default": 1
+            }
+          },
+          "required": [
+            "idx"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_insert_cols",
+        "description": "[OPENPYXL] Insert column or columns before col==idx",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "idx": {
+              "type": "string",
+              "description": "Index position for insertion/deletion"
+            },
+            "amount": {
+              "type": "string",
+              "description": "Number of rows/columns to insert/delete",
+              "default": 1
+            }
+          },
+          "required": [
+            "idx"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_delete_cols",
+        "description": "[OPENPYXL] Delete column or columns from worksheet structure. USE WHEN: removing empty columns or adjusting sheet layout. SLOW FOR: removing data columns based on criteria (use pandas_drop with axis=1 for data operations).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "idx": {
+              "type": "string",
+              "description": "Index position for insertion/deletion"
+            },
+            "amount": {
+              "type": "string",
+              "description": "Number of rows/columns to insert/delete",
+              "default": 1
+            }
+          },
+          "required": [
+            "idx"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_merge_cells",
+        "description": "[OPENPYXL] Set merge on a cell range.  Range is a cell range (e.g. A1:E1)",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "range_string": {
+              "type": "string",
+              "description": "Range reference (e.g., \"A1:B10\")"
+            },
+            "start_row": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "start_column": {
+              "type": "string",
+              "description": "Column reference or index"
+            },
+            "end_row": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "end_column": {
+              "type": "string",
+              "description": "Column reference or index"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_unmerge_cells",
+        "description": "[OPENPYXL] Remove merge on a cell range.  Range is a cell range (e.g. A1:E1)",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "range_string": {
+              "type": "string",
+              "description": "Range reference (e.g., \"A1:B10\")"
+            },
+            "start_row": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "start_column": {
+              "type": "string",
+              "description": "Column reference or index"
+            },
+            "end_row": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "end_column": {
+              "type": "string",
+              "description": "Column reference or index"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_add_chart",
+        "description": "[OPENPYXL] Add a chart to the sheet Optionally provide a cell for the top-left anchor",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "chart": {
+              "type": "string",
+              "description": "Chart object to add to worksheet"
+            },
+            "anchor": {
+              "type": "string",
+              "description": "Cell reference where image should be placed"
+            }
+          },
+          "required": [
+            "chart"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_add_image",
+        "description": "[OPENPYXL] Add an image to the sheet. Optionally provide a cell for the top-left anchor",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "img": {
+              "type": "string",
+              "description": "Path to image file or Image object"
+            },
+            "anchor": {
+              "type": "string",
+              "description": "Cell reference where image should be placed"
+            }
+          },
+          "required": [
+            "img"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_add_table",
+        "description": "[OPENPYXL] Check for duplicate name in definedNames and other worksheet tables before adding table.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "table": {
+              "type": "string",
+              "description": "Table object to add to worksheet"
+            }
+          },
+          "required": [
+            "table"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_add_data_validation",
+        "description": "[OPENPYXL] Add a data-validation object to the sheet.  The data-validation object defines the type of data-validation to be applied and the",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "data_validation": {
+              "type": "string",
+              "description": "data_validation parameter"
+            }
+          },
+          "required": [
+            "data_validation"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_cell",
+        "description": "[OPENPYXL] Access or update specific cell with formatting. USE WHEN: updating individual cells, applying cell-specific formatting, or working with formulas. SLOW FOR: bulk updates across many cells (use pandas operations for data transformation). Row and column are 1-based integers.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "row": {
+              "type": "string",
+              "description": "Row number (1-based)"
+            },
+            "column": {
+              "type": "string",
+              "description": "Column number (1-based)"
+            },
+            "value": {
+              "type": "string",
+              "description": "Value to write to the cell"
+            }
+          },
+          "required": [
+            "row",
+            "column"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_iter_rows",
+        "description": "[OPENPYXL] Iterate through worksheet rows one by one. USE WHEN: need to preserve cell formatting while reading, or selective cell updates. SLOW FOR: large datasets over 1000 rows (use pandas_read_excel for bulk data reading). Returns rows of cell values when values_only is true.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "min_row": {
+              "type": "string",
+              "description": "Starting row for data range"
+            },
+            "max_row": {
+              "type": "string",
+              "description": "Ending row for data range"
+            },
+            "min_col": {
+              "type": "string",
+              "description": "Starting column for data range"
+            },
+            "max_col": {
+              "type": "string",
+              "description": "Ending column for data range"
+            },
+            "values_only": {
+              "type": "string",
+              "description": "Return cell values instead of Cell objects",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_iter_cols",
+        "description": "[OPENPYXL] Produces cells from the worksheet, by column. Specify the iteration range using indices of rows and columns.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "min_col": {
+              "type": "string",
+              "description": "Starting column for data range"
+            },
+            "max_col": {
+              "type": "string",
+              "description": "Ending column for data range"
+            },
+            "min_row": {
+              "type": "string",
+              "description": "Starting row for data range"
+            },
+            "max_row": {
+              "type": "string",
+              "description": "Ending row for data range"
+            },
+            "values_only": {
+              "type": "string",
+              "description": "Return cell values instead of Cell objects",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_get_item",
+        "description": "[OPENPYXL] Access Worksheet item by key or index. Use this to access cells using Excel notation (e.g., 'A1', 'B2:D5') from the active worksheet.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "key parameter"
+            }
+          },
+          "required": [
+            "key"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_set_item",
+        "description": "[OPENPYXL] Set Worksheet item value by key or index. Use this to set cell values using Excel notation (e.g., worksheet['A1'] = 'value') on the active worksheet.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "key parameter"
+            },
+            "value": {
+              "type": "string",
+              "description": "Value to write to the cell"
+            }
+          },
+          "required": [
+            "key",
+            "value"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_fill_formula",
+        "description": "[OPENPYXL] Fill formula from source cell across target range with automatic reference adjustment. Like Excel's drag-fill or Ctrl+R/D. USE WHEN: applying similar formulas across multiple cells efficiently. Example: source='F29' with formula '=F18*F26', target='G29:I29' automatically creates G29='=G18*G26', H29='=H18*H26', I29='=I18*I26'. Handles relative, absolute ($A$1), and mixed ($A1, A$1) references correctly.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "source_cell": {
+              "type": "string",
+              "description": "Cell containing the formula to copy (e.g., 'F29')"
+            },
+            "target_range": {
+              "type": "string",
+              "description": "Range to fill with adjusted formula (e.g., 'G29:I29' or 'F30:F35')"
+            }
+          },
+          "required": [
+            "source_cell",
+            "target_range"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_font",
+        "description": "[OPENPYXL] Create font styling for professional formatting. USE AFTER: data is finalized with pandas. Creates rich text formatting with fonts, colors, bold, italic. Apply to cells for reports and presentations.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Font name (e.g., \"Calibri\", \"Arial\")"
+            },
+            "sz": {
+              "type": "string",
+              "description": "sz parameter"
+            },
+            "b": {
+              "type": "string",
+              "description": "b parameter"
+            },
+            "i": {
+              "type": "string",
+              "description": "i parameter"
+            },
+            "charset": {
+              "type": "string",
+              "description": "charset parameter"
+            },
+            "u": {
+              "type": "string",
+              "description": "u parameter"
+            },
+            "strike": {
+              "type": "string",
+              "description": "strike parameter"
+            },
+            "color": {
+              "type": "string",
+              "description": "Color in RGB hex format (e.g., \"FF0000\" for red)"
+            },
+            "scheme": {
+              "type": "string",
+              "description": "scheme parameter"
+            },
+            "family": {
+              "type": "string",
+              "description": "family parameter"
+            },
+            "size": {
+              "type": "string",
+              "description": "Font size in points"
+            },
+            "bold": {
+              "type": "string",
+              "description": "Make text bold"
+            },
+            "italic": {
+              "type": "string",
+              "description": "Make text italic"
+            },
+            "strikethrough": {
+              "type": "string",
+              "description": "strikethrough parameter"
+            },
+            "underline": {
+              "type": "string",
+              "description": "underline parameter"
+            },
+            "vertAlign": {
+              "type": "string",
+              "description": "vertAlign parameter"
+            },
+            "outline": {
+              "type": "string",
+              "description": "outline parameter"
+            },
+            "shadow": {
+              "type": "string",
+              "description": "shadow parameter"
+            },
+            "condense": {
+              "type": "string",
+              "description": "condense parameter"
+            },
+            "extend": {
+              "type": "string",
+              "description": "extend parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_patternfill",
+        "description": "[OPENPYXL] Area fill patterns for use in styles.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "patternType": {
+              "type": "string",
+              "description": "Fill pattern type"
+            },
+            "fgColor": {
+              "type": "string",
+              "description": "Foreground color",
+              "default": "<openpyxl.styles.colors.Color object>\nParameters:\nrgb='00000000', indexed=None, auto=None, theme=None, tint=0.0, type='rgb'"
+            },
+            "bgColor": {
+              "type": "string",
+              "description": "Background color",
+              "default": "<openpyxl.styles.colors.Color object>\nParameters:\nrgb='00000000', indexed=None, auto=None, theme=None, tint=0.0, type='rgb'"
+            },
+            "fill_type": {
+              "type": "string",
+              "description": "Fill pattern type (e.g., \"solid\")"
+            },
+            "start_color": {
+              "type": "string",
+              "description": "Starting color for gradient"
+            },
+            "end_color": {
+              "type": "string",
+              "description": "Ending color for gradient"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_gradientfill",
+        "description": "[OPENPYXL] Fill areas with gradient",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Validation type (list, whole, decimal, date, etc.)",
+              "default": "linear"
+            },
+            "degree": {
+              "type": "string",
+              "description": "degree parameter",
+              "default": 0
+            },
+            "left": {
+              "type": "string",
+              "description": "Left border style",
+              "default": 0
+            },
+            "right": {
+              "type": "string",
+              "description": "Right border style",
+              "default": 0
+            },
+            "top": {
+              "type": "string",
+              "description": "Top border style",
+              "default": 0
+            },
+            "bottom": {
+              "type": "string",
+              "description": "Bottom border style",
+              "default": 0
+            },
+            "stop": {
+              "type": "string",
+              "description": "stop parameter",
+              "default": "()"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_border",
+        "description": "[OPENPYXL] Create cell borders for professional table formatting. USE AFTER: data is finalized. Creates borders for printable reports and visual structure. Requires Side objects for border styles.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "left": {
+              "type": "string",
+              "description": "Left border style"
+            },
+            "right": {
+              "type": "string",
+              "description": "Right border style"
+            },
+            "top": {
+              "type": "string",
+              "description": "Top border style"
+            },
+            "bottom": {
+              "type": "string",
+              "description": "Bottom border style"
+            },
+            "diagonal": {
+              "type": "string",
+              "description": "Diagonal border style"
+            },
+            "diagonal_direction": {
+              "type": "string",
+              "description": "diagonal_direction parameter"
+            },
+            "vertical": {
+              "type": "string",
+              "description": "Vertical alignment (top, center, bottom, justify)"
+            },
+            "horizontal": {
+              "type": "string",
+              "description": "Horizontal alignment (left, center, right, justify)"
+            },
+            "diagonalUp": {
+              "type": "string",
+              "description": "diagonalUp parameter",
+              "default": false
+            },
+            "diagonalDown": {
+              "type": "string",
+              "description": "diagonalDown parameter",
+              "default": false
+            },
+            "outline": {
+              "type": "string",
+              "description": "outline parameter",
+              "default": true
+            },
+            "start": {
+              "type": "string",
+              "description": "start parameter"
+            },
+            "end": {
+              "type": "string",
+              "description": "end parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_side",
+        "description": "[OPENPYXL] Border options for use in styles.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "style": {
+              "type": "string",
+              "description": "Border line style (e.g., \"thin\", \"medium\", \"thick\")"
+            },
+            "color": {
+              "type": "string",
+              "description": "Color in RGB hex format (e.g., \"FF0000\" for red)"
+            },
+            "border_style": {
+              "type": "string",
+              "description": "Style of the border line"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_alignment",
+        "description": "[OPENPYXL] Alignment options for use in styles.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "horizontal": {
+              "type": "string",
+              "description": "Horizontal alignment (left, center, right, justify)"
+            },
+            "vertical": {
+              "type": "string",
+              "description": "Vertical alignment (top, center, bottom, justify)"
+            },
+            "textRotation": {
+              "type": "string",
+              "description": "textRotation parameter",
+              "default": 0
+            },
+            "wrapText": {
+              "type": "string",
+              "description": "wrapText parameter"
+            },
+            "shrinkToFit": {
+              "type": "string",
+              "description": "shrinkToFit parameter"
+            },
+            "indent": {
+              "type": "string",
+              "description": "Indentation level",
+              "default": 0
+            },
+            "relativeIndent": {
+              "type": "string",
+              "description": "relativeIndent parameter",
+              "default": 0
+            },
+            "justifyLastLine": {
+              "type": "string",
+              "description": "justifyLastLine parameter"
+            },
+            "readingOrder": {
+              "type": "string",
+              "description": "readingOrder parameter",
+              "default": 0
+            },
+            "text_rotation": {
+              "type": "string",
+              "description": "Text rotation angle in degrees"
+            },
+            "wrap_text": {
+              "type": "string",
+              "description": "Wrap text within cell"
+            },
+            "shrink_to_fit": {
+              "type": "string",
+              "description": "Shrink text to fit cell width"
+            },
+            "mergeCell": {
+              "type": "string",
+              "description": "mergeCell parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_protection",
+        "description": "[OPENPYXL] Protection options for use in styles.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "locked": {
+              "type": "string",
+              "description": "locked parameter",
+              "default": true
+            },
+            "hidden": {
+              "type": "string",
+              "description": "hidden parameter",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_cell_set_style",
+        "description": "[OPENPYXL] Apply comprehensive styling to cell(s) in one versatile call. Accepts EITHER: (1) Style palette IDs from openpyxl_get_sheet_complete (e.g., style_id='s1'), OR (2) Individual style properties (font, fill, border, etc.). USE WHEN: need to format cells with fonts, colors, borders, alignment, or number formats. PALETTE WORKFLOW: Call openpyxl_get_sheet_complete to see sheet with compressed style_palette, then reference styles by ID (e.g., 's1', 's2') for exact replication. INLINE WORKFLOW: Specify individual properties when creating new styles. SUPPORTS: Single cells ('A1'), ranges ('A1:B10'), and multiple properties at once. MORE EFFICIENT: Apply multiple properties in one call instead of separate operations.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "cell_reference": {
+              "type": "string",
+              "description": "Cell or range to style (e.g., 'A1' for single cell, 'B2:D10' for range)"
+            },
+            "style_id": {
+              "type": "string",
+              "description": "Style ID from palette (e.g., 's1', 's2', 's3'). Obtained from openpyxl_get_sheet_complete's style_palette. If provided, applies the complete style from palette (overrides other parameters). Use this for replicating existing styles efficiently."
+            },
+            "font": {
+              "type": "string",
+              "description": "Font styling - EITHER: (1) Style object ID like 'font_1' from openpyxl_create_font, OR (2) Inline JSON string like '{\"bold\": true, \"size\": 12, \"color\": \"#F00\"}'. Supports properties: bold (true/false), italic (true/false), size (number), color (hex like '#F00' or '#FF0000'), underline ('single'/'double'/etc), strikethrough (true/false). Example inline: '{\"bold\": true, \"italic\": true, \"size\": 14, \"color\": \"#00F\"}'"
+            },
+            "fill": {
+              "type": "string",
+              "description": "Fill/background styling - EITHER: (1) Style object ID like 'fill_1' from openpyxl_create_patternfill, OR (2) Inline JSON string like '{\"color\": \"#FF0\"}' for solid fill. For simple solid fills, just specify color as hex (e.g., '{\"color\": \"#FF0\"}' for yellow background). Example: '{\"color\": \"#0F0\"}' for green background"
+            },
+            "border": {
+              "type": "string",
+              "description": "Border styling - EITHER: (1) Style object ID like 'border_1' from openpyxl_create_border, OR (2) Inline JSON string like '{\"style\": \"thin\", \"sides\": \"all\"}'. Style options: 'thin', 'medium', 'thick', 'double'. Sides options: 'all' (all 4 sides), 'outline' (same as all), 'top', 'bottom', 'left', 'right'. Example: '{\"style\": \"medium\", \"sides\": \"all\"}' for medium border on all sides"
+            },
+            "alignment": {
+              "type": "string",
+              "description": "Alignment styling - EITHER: (1) Style object ID like 'align_1' from openpyxl_create_alignment, OR (2) Inline JSON string like '{\"horizontal\": \"center\", \"vertical\": \"top\", \"wrap_text\": true}'. Horizontal options: 'left', 'center', 'right', 'justify'. Vertical options: 'top', 'center', 'bottom'. Other properties: wrap_text (true/false), text_rotation (degrees 0-180), indent (number). Example: '{\"horizontal\": \"center\", \"wrap_text\": true}'"
+            },
+            "number_format": {
+              "type": "string",
+              "description": "Number format - EITHER: (1) Preset name like 'accounting', 'percentage', 'currency', 'date_short', OR (2) Excel format code like '$#,##0.00'. Presets: 'accounting', 'accounting_usd', 'percentage', 'percentage_whole', 'currency', 'currency_whole', 'date_short', 'date_long', 'date_medium', 'time_12h', 'time_24h', 'number_comma', 'number_comma_2dec', 'number_2dec'. Example: 'accounting' or '$#,##0.00'"
+            }
+          },
+          "required": [
+            "cell_reference"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_barchart",
+        "description": "[OPENPYXL] Create Excel-native bar chart that updates with data. USE AFTER: data is prepared with pandas analysis. Creates interactive charts embedded in worksheet. NOTE: First analyze/prepare data with pandas, save to Excel, then create charts with openpyxl.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "gapWidth": {
+              "type": "string",
+              "description": "gapWidth parameter",
+              "default": 150
+            },
+            "overlap": {
+              "type": "string",
+              "description": "overlap parameter"
+            },
+            "serLines": {
+              "type": "string",
+              "description": "serLines parameter"
+            },
+            "extLst": {
+              "type": "string",
+              "description": "extLst parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_linechart",
+        "description": "[OPENPYXL] Base class for all charts",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "hiLowLines": {
+              "type": "string",
+              "description": "hiLowLines parameter"
+            },
+            "upDownBars": {
+              "type": "string",
+              "description": "upDownBars parameter"
+            },
+            "marker": {
+              "type": "string",
+              "description": "marker parameter"
+            },
+            "smooth": {
+              "type": "string",
+              "description": "smooth parameter"
+            },
+            "extLst": {
+              "type": "string",
+              "description": "extLst parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_piechart",
+        "description": "[OPENPYXL] Base class for all charts",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "firstSliceAng": {
+              "type": "string",
+              "description": "firstSliceAng parameter",
+              "default": 0
+            },
+            "extLst": {
+              "type": "string",
+              "description": "extLst parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_scatterchart",
+        "description": "[OPENPYXL] Base class for all charts",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "scatterStyle": {
+              "type": "string",
+              "description": "Style configuration"
+            },
+            "varyColors": {
+              "type": "string",
+              "description": "Color value (RGB hex or theme color)"
+            },
+            "ser": {
+              "type": "string",
+              "description": "ser parameter",
+              "default": "()"
+            },
+            "dLbls": {
+              "type": "string",
+              "description": "dLbls parameter"
+            },
+            "extLst": {
+              "type": "string",
+              "description": "extLst parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_areachart",
+        "description": "[OPENPYXL] Base class for all charts",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "axId": {
+              "type": "string",
+              "description": "axId parameter"
+            },
+            "extLst": {
+              "type": "string",
+              "description": "extLst parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_chart_add_data",
+        "description": "[OPENPYXL] Add data range to any chart type in one universal call. Works with ALL chart types (bar, line, pie, scatter, area, and future types). Chart type is automatically determined from the chart_id (e.g., 'barchart_0', 'linechart_1'). USE WHEN: need to populate chart with data series. SCALABLE: Supports any chart type without separate tools. Default treats each column as a data series.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "chart_id": {
+              "type": "string",
+              "description": "Chart ID returned from chart creation (e.g., 'barchart_0', 'linechart_1', 'piechart_2'). The ID contains the chart type, so this tool works with all chart types automatically."
+            },
+            "data": {
+              "type": "string",
+              "description": "Data reference for the chart - can be a Reference ID (e.g., 'reference_1' from openpyxl_create_reference) OR a range string (e.g., 'B1:D7' or 'Sheet1!B1:D7')"
+            },
+            "from_rows": {
+              "type": "string",
+              "description": "Organize data by rows instead of columns",
+              "default": false
+            },
+            "titles_from_data": {
+              "type": "string",
+              "description": "Use first row/column as series titles",
+              "default": false
+            }
+          },
+          "required": [
+            "chart_id",
+            "data"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_chart_set_categories",
+        "description": "[OPENPYXL] Set category labels (x-axis values) for any chart type in one universal call. Works with ALL chart types (bar, line, pie, scatter, area, and future types). Chart type is automatically determined from the chart_id. USE WHEN: need to set axis labels or categories for charts. SCALABLE: Supports any chart type without separate tools.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "chart_id": {
+              "type": "string",
+              "description": "Chart ID returned from chart creation (e.g., 'barchart_0', 'linechart_1'). The ID contains the chart type, so this tool works with all chart types automatically."
+            },
+            "labels": {
+              "type": "string",
+              "description": "Category labels - can be a Reference ID (e.g., 'reference_1' from openpyxl_create_reference) OR a range string (e.g., 'A2:A7' or 'Sheet1!A2:A7')"
+            }
+          },
+          "required": [
+            "chart_id",
+            "labels"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_list_charts",
+        "description": "[OPENPYXL] List all charts in the workbook with their IDs and basic info. USE WHEN: checking what charts exist before creating new ones, finding chart IDs for operations. Returns dictionary of all charts with types and titles.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_get_chart_info",
+        "description": "[OPENPYXL] Get detailed information about a specific chart. USE WHEN: inspecting chart properties, debugging chart issues, checking chart configuration. Returns title, series count, axis labels, and style.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "chart_id": {
+              "type": "string",
+              "description": "Chart ID (e.g., 'barchart_0', 'linechart_1')"
+            }
+          },
+          "required": [
+            "chart_id"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_get_worksheet_charts",
+        "description": "[OPENPYXL] Get all charts on the active worksheet. USE WHEN: checking which charts are placed on current sheet, verifying chart placement. Returns list of chart IDs on active sheet.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_get_sheet_complete",
+        "description": "[OPENPYXL] Get complete sheet snapshot with ALL data, formulas, and formatting in COMPRESSED format. Returns hierarchical JSON with: (1) sheet_metadata (dimensions, column widths, row heights), (2) style_palette (deduplicated styles with IDs like 's1', 's2'), (3) cells (with data/formulas and style references, ranges collapsed), (4) special_features (merged cells, frozen panes, conditional formatting). COMPRESSION: Unique styles defined once in palette, cells reference by ID. Consecutive identical cells collapsed to ranges (e.g., 'C5:C10'). Number formats use presets ('accounting' not full string). Colors use short hex ('#00F' not '#0000FF'). RESULT: 85-93% token reduction vs verbose format. TOKEN EFFICIENT: ~500 tokens for typical financial model (vs 7,500 tokens uncompressed). WORKFLOW: Call this to SEE the sheet with compressed styles, then use openpyxl_cell_set_style with style_id='s1' to RECREATE efficiently.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sheet": {
+              "type": "string",
+              "description": "Sheet name to read. If not provided, uses active sheet."
+            },
+            "include_formatting": {
+              "type": "boolean",
+              "description": "Include formatting information (font, fill, border, alignment, number format). Default: true."
+            },
+            "include_formulas": {
+              "type": "boolean",
+              "description": "Include formula strings (not just calculated values). Default: true."
+            },
+            "sparse_formatting": {
+              "type": "boolean",
+              "description": "Only include cells with non-default formatting (RECOMMENDED for token efficiency). Default: true."
+            },
+            "cell_range": {
+              "type": "string",
+              "description": "Optional cell range to limit scope (e.g., 'B24:E50'). If not provided, scans entire used range. Use for very large sheets."
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_reference",
+        "description": "[OPENPYXL] Normalise cell range references",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "worksheet": {
+              "type": "string",
+              "description": "Worksheet object to operate on"
+            },
+            "min_col": {
+              "type": "string",
+              "description": "Starting column for data range"
+            },
+            "min_row": {
+              "type": "string",
+              "description": "Starting row for data range"
+            },
+            "max_col": {
+              "type": "string",
+              "description": "Ending column for data range"
+            },
+            "max_row": {
+              "type": "string",
+              "description": "Ending row for data range"
+            },
+            "range_string": {
+              "type": "string",
+              "description": "Range reference (e.g., \"A1:B10\")"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_image",
+        "description": "[OPENPYXL] Image in a spreadsheet",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "img": {
+              "type": "string",
+              "description": "Path to image file or Image object"
+            }
+          },
+          "required": [
+            "img"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_table",
+        "description": "[OPENPYXL] Objects can serialise to XML their attributes and child objects.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "id parameter",
+              "default": 1
+            },
+            "displayName": {
+              "type": "string",
+              "description": "Name for the table"
+            },
+            "ref": {
+              "type": "string",
+              "description": "Cell range for the table (e.g., \"A1:D10\")"
+            },
+            "name": {
+              "type": "string",
+              "description": "Font name (e.g., \"Calibri\", \"Arial\")"
+            },
+            "comment": {
+              "type": "string",
+              "description": "comment parameter"
+            },
+            "tableType": {
+              "type": "string",
+              "description": "tableType parameter"
+            },
+            "headerRowCount": {
+              "type": "string",
+              "description": "Row reference or index",
+              "default": 1
+            },
+            "insertRow": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "insertRowShift": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "totalsRowCount": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "totalsRowShown": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "published": {
+              "type": "string",
+              "description": "published parameter"
+            },
+            "headerRowDxfId": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "dataDxfId": {
+              "type": "string",
+              "description": "dataDxfId parameter"
+            },
+            "totalsRowDxfId": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "headerRowBorderDxfId": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "tableBorderDxfId": {
+              "type": "string",
+              "description": "tableBorderDxfId parameter"
+            },
+            "totalsRowBorderDxfId": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "headerRowCellStyle": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "dataCellStyle": {
+              "type": "string",
+              "description": "Style configuration"
+            },
+            "totalsRowCellStyle": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "connectionId parameter"
+            },
+            "autoFilter": {
+              "type": "string",
+              "description": "autoFilter parameter"
+            },
+            "sortState": {
+              "type": "string",
+              "description": "sortState parameter"
+            },
+            "tableColumns": {
+              "type": "string",
+              "description": "Column reference or index",
+              "default": "()"
+            },
+            "tableStyleInfo": {
+              "type": "string",
+              "description": "Table style configuration"
+            },
+            "extLst": {
+              "type": "string",
+              "description": "extLst parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_tablestyleinfo",
+        "description": "[OPENPYXL] Objects can serialise to XML their attributes and child objects.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Font name (e.g., \"Calibri\", \"Arial\")"
+            },
+            "showFirstColumn": {
+              "type": "string",
+              "description": "Column reference or index"
+            },
+            "showLastColumn": {
+              "type": "string",
+              "description": "Column reference or index"
+            },
+            "showRowStripes": {
+              "type": "string",
+              "description": "Row reference or index"
+            },
+            "showColumnStripes": {
+              "type": "string",
+              "description": "Column reference or index"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_datavalidation",
+        "description": "[OPENPYXL] Objects can serialise to XML their attributes and child objects.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Validation type (list, whole, decimal, date, etc.)"
+            },
+            "formula1": {
+              "type": "string",
+              "description": "First formula or value for validation"
+            },
+            "formula2": {
+              "type": "string",
+              "description": "Second formula or value (for between/notBetween)"
+            },
+            "showErrorMessage": {
+              "type": "string",
+              "description": "Show error message on invalid input",
+              "default": false
+            },
+            "showInputMessage": {
+              "type": "string",
+              "description": "showInputMessage parameter",
+              "default": false
+            },
+            "showDropDown": {
+              "type": "string",
+              "description": "Show dropdown for list validation",
+              "default": false
+            },
+            "allowBlank": {
+              "type": "string",
+              "description": "allowBlank parameter",
+              "default": false
+            },
+            "sqref": {
+              "type": "string",
+              "description": "sqref parameter",
+              "default": "()"
+            },
+            "promptTitle": {
+              "type": "string",
+              "description": "promptTitle parameter"
+            },
+            "errorStyle": {
+              "type": "string",
+              "description": "Style configuration"
+            },
+            "error": {
+              "type": "string",
+              "description": "error parameter"
+            },
+            "prompt": {
+              "type": "string",
+              "description": "prompt parameter"
+            },
+            "errorTitle": {
+              "type": "string",
+              "description": "errorTitle parameter"
+            },
+            "imeMode": {
+              "type": "string",
+              "description": "imeMode parameter"
+            },
+            "operator": {
+              "type": "string",
+              "description": "Comparison operator"
+            },
+            "allow_blank": {
+              "type": "string",
+              "description": "allow_blank parameter"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_colorscalerule",
+        "description": "[OPENPYXL] Backwards compatibility",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "args": {
+              "type": "string",
+              "description": "args parameter"
+            },
+            "kwargs": {
+              "type": "string",
+              "description": "kwargs parameter"
+            }
+          },
+          "required": [
+            "args",
+            "kwargs"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_add_conditional_formatting",
+        "description": "[OPENPYXL] Add conditional formatting to a cell range in ONE call. Supports all rule types: cell value comparisons, color scales, data bars, icon sets. USE FOR: Highlighting cells based on conditions (e.g., 'YES' in green background, numbers >100 in red, progress bars, traffic lights). WORKFLOW: Single call applies rule directly to range - no object IDs needed. IMPORTANT: For cell highlighting, use BOTH 'fill' (background color) AND 'font' (text color) together. EXAMPLES: Green highlight for 'YES': rule_type='cell_is', operator='equal', formula=['\"YES\"'], fill={'pattern_type':'solid','fg_color':'C6EFCE'}, font={'color':'006100'}. Red for numbers >100: rule_type='cell_is', operator='greaterThan', formula=['100'], fill={'pattern_type':'solid','fg_color':'FFC7CE'}, font={'color':'9C0006'}. Data bar: rule_type='data_bar', color='638EC6'. Color scale: rule_type='color_scale', min_color='F8696B', max_color='63BE7B'.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "range": {
+              "type": "string",
+              "description": "Cell range to apply formatting to (e.g., 'A1:A10', 'B2:D20'). Required."
+            },
+            "rule_type": {
+              "type": "string",
+              "description": "Type of conditional formatting rule: 'cell_is' (value comparison), 'color_scale' (gradient), 'data_bar' (horizontal bars), 'icon_set' (icons like arrows/traffic lights). Required."
+            },
+            "operator": {
+              "type": "string",
+              "description": "For rule_type='cell_is' only. Comparison operator: 'equal', 'notEqual', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual', 'between', 'notBetween', 'containsText', 'notContainsText', 'beginsWith', 'endsWith'."
+            },
+            "formula": {
+              "type": "string",
+              "description": "For rule_type='cell_is' only. JSON array of values to compare. Text: ['\"YES\"']. Numbers: ['100']. Between: ['10', '20']."
+            },
+            "fill": {
+              "type": "string",
+              "description": "For rule_type='cell_is' only. JSON dict with fill styling for BACKGROUND color: {\"pattern_type\": \"solid\", \"fg_color\": \"C6EFCE\"}. Use WITH 'font' for complete cell highlighting (background + text color)."
+            },
+            "font": {
+              "type": "string",
+              "description": "For rule_type='cell_is' only. JSON dict with font styling for TEXT color: {\"color\": \"006100\", \"bold\": true}. Use WITH 'fill' for complete cell highlighting (background + text color)."
+            },
+            "border": {
+              "type": "string",
+              "description": "For rule_type='cell_is' only. JSON dict with border styling."
+            },
+            "icon_style": {
+              "type": "string",
+              "description": "For rule_type='icon_set' only. Icon style: '3Arrows', '3ArrowsGray', '3Flags', '3TrafficLights1', '3TrafficLights2', '3Signs', '3Symbols', '3Symbols2', '4Arrows', '4ArrowsGray', '4RedToBlack', '4Rating', '4TrafficLights', '5Arrows', '5ArrowsGray', '5Rating', '5Quarters'."
+            },
+            "color": {
+              "type": "string",
+              "description": "For rule_type='data_bar' only. Bar color as RGB hex (e.g., '638EC6')."
+            },
+            "min_color": {
+              "type": "string",
+              "description": "For rule_type='color_scale' only. Minimum value color as RGB hex (e.g., 'F8696B' for red)."
+            },
+            "mid_color": {
+              "type": "string",
+              "description": "For rule_type='color_scale' only. Optional middle value color as RGB hex (e.g., 'FFEB84' for yellow). Creates 3-color scale."
+            },
+            "max_color": {
+              "type": "string",
+              "description": "For rule_type='color_scale' only. Maximum value color as RGB hex (e.g., '63BE7B' for green)."
+            },
+            "stopIfTrue": {
+              "type": "boolean",
+              "description": "For rule_type='cell_is' only. If true, stops evaluating other rules if this one matches. Default: false."
+            }
+          },
+          "required": [
+            "range",
+            "rule_type"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_iconsetrule",
+        "description": "[OPENPYXL] Convenience function for creating icon set rules",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "args": {
+              "type": "string",
+              "description": "args parameter"
+            },
+            "kwargs": {
+              "type": "string",
+              "description": "kwargs parameter"
+            }
+          },
+          "required": [
+            "args",
+            "kwargs"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_create_databarrule",
+        "description": "[OPENPYXL] Initialize self.  See help(type(self)) for accurate signature.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "args": {
+              "type": "string",
+              "description": "args parameter"
+            },
+            "kwargs": {
+              "type": "string",
+              "description": "kwargs parameter"
+            }
+          },
+          "required": [
+            "args",
+            "kwargs"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_set_column_width",
+        "description": "[OPENPYXL] Set the width of a column. USE WHEN: adjusting column width for better visibility or printing. Width units are approximately character widths.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "column": {
+              "type": "string",
+              "description": "Column letter (e.g., 'A', 'B', 'AB') or column index (1-based)"
+            },
+            "width": {
+              "type": "string",
+              "description": "Column width in character units (e.g., '15', '20.5')"
+            }
+          },
+          "required": [
+            "column",
+            "width"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_set_row_height",
+        "description": "[OPENPYXL] Set the height of a row. USE WHEN: adjusting row height for better visibility or to fit content. Height is in points (1/72 inch).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "row": {
+              "type": "string",
+              "description": "Row number (1-based)"
+            },
+            "height": {
+              "type": "string",
+              "description": "Row height in points (e.g., '20', '30.5')"
+            }
+          },
+          "required": [
+            "row",
+            "height"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_set_auto_filter",
+        "description": "[OPENPYXL] Enable AutoFilter on a range of cells. USE WHEN: allowing users to filter data in Excel. Creates dropdown arrows in header row for filtering.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "range_string": {
+              "type": "string",
+              "description": "Range to apply filter to (e.g., 'A1:D100')"
+            }
+          },
+          "required": [
+            "range_string"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_cell_add_comment",
+        "description": "[OPENPYXL] Add a comment/note to a cell. USE WHEN: providing additional information or context without cluttering the cell content.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "cell_reference": {
+              "type": "string",
+              "description": "Cell reference (e.g., 'A1')"
+            },
+            "comment_text": {
+              "type": "string",
+              "description": "Text content of the comment"
+            },
+            "author": {
+              "type": "string",
+              "description": "Comment author name",
+              "default": "User"
+            }
+          },
+          "required": [
+            "cell_reference",
+            "comment_text"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_cell_add_hyperlink",
+        "description": "[OPENPYXL] Add a clickable hyperlink to a cell. USE WHEN: linking to websites, other files, or other sheets. The cell value becomes the link text.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "cell_reference": {
+              "type": "string",
+              "description": "Cell reference (e.g., 'A1')"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL or reference to link to (e.g., 'https://example.com', '#Sheet2!A1')"
+            },
+            "display_text": {
+              "type": "string",
+              "description": "Text to display in the cell",
+              "default": ""
+            }
+          },
+          "required": [
+            "cell_reference",
+            "url"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_freeze_panes",
+        "description": "[OPENPYXL] Freeze rows and/or columns to keep them visible while scrolling. USE WHEN: keeping headers visible while scrolling through data. Cell reference determines what gets frozen (e.g., 'B2' freezes row 1 and column A).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "cell_reference": {
+              "type": "string",
+              "description": "Cell reference for freeze point (e.g., 'A2' freezes row 1, 'B1' freezes column A, 'B2' freezes both)"
+            }
+          },
+          "required": [
+            "cell_reference"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_workbook_define_name",
+        "description": "[OPENPYXL] Create a named range for easier formula references. USE WHEN: creating reusable references to cell ranges. Named ranges can be used in formulas instead of cell references.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name for the range (e.g., 'SalesData', 'TaxRate')"
+            },
+            "reference": {
+              "type": "string",
+              "description": "Range reference with sheet name (e.g., 'Sheet1!$A$1:$C$10', 'Sheet1!$B$2')"
+            }
+          },
+          "required": [
+            "name",
+            "reference"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_set_protection",
+        "description": "[OPENPYXL] Protect or unprotect a worksheet with optional password. USE WHEN: preventing accidental changes to formulas or data. Users can still view but not edit protected sheets.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "string",
+              "description": "Enable protection ('true') or disable ('false')",
+              "default": "true"
+            },
+            "password": {
+              "type": "string",
+              "description": "Optional password for protection",
+              "default": ""
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "openpyxl_worksheet_set_visibility",
+        "description": "[OPENPYXL] Set worksheet visibility state. USE WHEN: hiding sheets with intermediate calculations or data. Hidden sheets can still be referenced in formulas.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sheet_name": {
+              "type": "string",
+              "description": "Name of the sheet to modify"
+            },
+            "state": {
+              "type": "string",
+              "description": "Visibility state: 'visible', 'hidden', or 'veryHidden'",
+              "default": "visible"
+            }
+          },
+          "required": [
+            "sheet_name"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_read_excel",
+        "description": "[PANDAS] Read Excel data into DataFrame. WARNING: Formula cells show as NaN if not calculated! If you created formulas with openpyxl, use bridge_openpyxl_to_pandas instead. USE WHEN: reading existing Excel files with data. NOT FOR: files with uncalculated formulas (use bridge_openpyxl_to_pandas), preserving formatting (use openpyxl_load_workbook).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "io": {
+              "type": "string",
+              "description": "Path to Excel file, URL, or file-like object"
+            },
+            "sheet_name": {
+              "type": [
+                "string",
+                "integer",
+                "array",
+                "null"
+              ],
+              "description": "Sheet name/index to read. None reads all sheets into dict"
+            },
+            "header": {
+              "type": [
+                "integer",
+                "array",
+                "null"
+              ],
+              "description": "Row number(s) to use as column names"
+            },
+            "index_col": {
+              "type": [
+                "integer",
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to use as row labels"
+            },
+            "usecols": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Columns to parse (e.g., 'A:E' or ['A', 'C', 'E'])"
+            },
+            "dtype": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Data type for columns (dict mapping column names to types)"
+            },
+            "skiprows": {
+              "type": [
+                "integer",
+                "array",
+                "null"
+              ],
+              "description": "Rows to skip at the beginning"
+            },
+            "nrows": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of rows to read"
+            },
+            "parse_dates": {
+              "type": [
+                "boolean",
+                "array",
+                "object"
+              ],
+              "description": "Parse date columns"
+            }
+          },
+          "required": [
+            "io"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_to_excel",
+        "description": "[PANDAS] Write DataFrame to Excel. CRITICAL: If you created an ExcelWriter with pandas_excelwriter_create, you MUST use its writer_id (e.g., 'writer_1'), NOT the file path. USE WHEN: exporting data, creating multi-sheet files. WORKFLOW: For multiple sheets: create writer \u2192 use writer_id for all sheets \u2192 close writer. For single sheet: use file path directly. NOTE: Mixing writer_id and file path will corrupt the file.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "excel_writer": {
+              "type": "string",
+              "description": "EITHER: (1) Writer ID from pandas_excelwriter_create (e.g., 'writer_1') if you created one, OR (2) File path ending in .xlsx for direct single-sheet write. WARNING: If ExcelWriter exists for this file, you MUST use the writer_id to avoid corruption."
+            },
+            "sheet_name": {
+              "type": "string",
+              "description": "Name of sheet to write DataFrame to",
+              "default": "Sheet1"
+            },
+            "index": {
+              "type": "boolean",
+              "description": "Write row names/index",
+              "default": true
+            },
+            "columns": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Columns to write (None writes all)"
+            },
+            "header": {
+              "type": [
+                "boolean",
+                "array"
+              ],
+              "description": "Write column names",
+              "default": true
+            },
+            "startrow": {
+              "type": "integer",
+              "description": "Upper left cell row to start writing",
+              "default": 0
+            },
+            "startcol": {
+              "type": "integer",
+              "description": "Upper left cell column to start writing",
+              "default": 0
+            },
+            "float_format": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Format string for floating point numbers"
+            },
+            "freeze_panes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Tuple of (row, column) to freeze panes"
+            }
+          },
+          "required": [
+            "excel_writer"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_excelwriter_create",
+        "description": "[PANDAS] Create ExcelWriter for multi-sheet Excel files. Returns a writer_id (e.g., 'writer_1') that you MUST use in pandas_to_excel calls. USE WHEN: writing multiple DataFrames to one file. WORKFLOW: (1) Create writer \u2192 get writer_id, (2) Use writer_id in ALL pandas_to_excel calls, (3) Close with pandas_excelwriter_close. WARNING: Never mix writer_id and file paths - always use the writer_id returned by this tool.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path to Excel file"
+            },
+            "engine": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Excel writer engine (openpyxl, xlsxwriter)"
+            },
+            "mode": {
+              "type": "string",
+              "description": "File mode ('w' for write, 'a' for append)",
+              "default": "w"
+            },
+            "if_sheet_exists": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How to handle existing sheets when appending ('error', 'new', 'replace', 'overlay')"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_excelwriter_close",
+        "description": "[PANDAS] Save and close the ExcelWriter. CRITICAL: Must be called after all pandas_to_excel operations with a writer_id. Saves the file and releases the lock. After this, you can safely use openpyxl_load_workbook on the file.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_pivot_table",
+        "description": "[PANDAS] Create powerful pivot table with multiple aggregations (sum, mean, count, etc.). USE WHEN: need cross-tabulation analysis, data summarization, or complex aggregations. FAST: Processes millions of rows in seconds. NOTE: For Excel-native pivot tables with interactivity, save result then format with openpyxl.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "values": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to aggregate"
+            },
+            "index": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to group by for rows"
+            },
+            "columns": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to group by for columns"
+            },
+            "aggfunc": {
+              "type": [
+                "string",
+                "array",
+                "object"
+              ],
+              "description": "Aggregation function(s) (mean, sum, count, etc.)",
+              "default": "mean"
+            },
+            "fill_value": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "description": "Value to replace missing values"
+            },
+            "margins": {
+              "type": "boolean",
+              "description": "Add row/column margins (subtotals)",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_merge",
+        "description": "[PANDAS] Merge two DataFrames using database-style joins. Similar to VLOOKUP but much more powerful - handles millions of rows, multiple join keys, and various join types (left, right, outer, inner). FAST: 1000x faster than Excel VLOOKUP on large datasets.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "right": {
+              "type": "string",
+              "description": "Name/ID of the right DataFrame to merge"
+            },
+            "how": {
+              "type": "string",
+              "description": "Type of merge (left, right, outer, inner, cross)",
+              "default": "inner"
+            },
+            "on": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to join on"
+            },
+            "left_on": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) from left DataFrame to join on"
+            },
+            "right_on": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) from right DataFrame to join on"
+            },
+            "suffixes": {
+              "type": "array",
+              "description": "Suffixes for overlapping columns",
+              "default": [
+                "_x",
+                "_y"
+              ]
+            }
+          },
+          "required": [
+            "right"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_groupby",
+        "description": "[PANDAS] Group DataFrame by one or more columns and compute aggregate statistics. USE WHEN: need subtotals, averages, or counts by category. FAST: Handles millions of rows efficiently, 100x faster than cell-by-cell operations. Similar to Excel subtotals but more powerful.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "by": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "Column(s) to group by"
+            },
+            "agg": {
+              "type": [
+                "string",
+                "array",
+                "object"
+              ],
+              "description": "Aggregation operations (sum, mean, count, min, max, etc.)"
+            },
+            "as_index": {
+              "type": "boolean",
+              "description": "Use group labels as index",
+              "default": true
+            }
+          },
+          "required": [
+            "by"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_sort_values",
+        "description": "[PANDAS] Sort DataFrame by one or more columns.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "by": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "Column(s) to sort by"
+            },
+            "ascending": {
+              "type": [
+                "boolean",
+                "array"
+              ],
+              "description": "Sort ascending (True) or descending (False)",
+              "default": true
+            },
+            "na_position": {
+              "type": "string",
+              "description": "Where to place NaN values ('first' or 'last')",
+              "default": "last"
+            }
+          },
+          "required": [
+            "by"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_query",
+        "description": "[PANDAS] Filter DataFrame rows using SQL-like expressions. USE WHEN: complex filtering with multiple conditions. FAST: Instantly filters millions of rows. Example: 'Age > 30 and City == \"NYC\"'. More powerful than Excel AutoFilter.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "expr": {
+              "type": "string",
+              "description": "Query expression (e.g., 'Age > 30 and City == \"NYC\"')"
+            }
+          },
+          "required": [
+            "expr"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_drop_duplicates",
+        "description": "[PANDAS] Remove duplicate rows from DataFrame.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "subset": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to consider for duplicates"
+            },
+            "keep": {
+              "type": "string",
+              "description": "Which duplicates to keep ('first', 'last', False)",
+              "default": "first"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_assign",
+        "description": "[PANDAS] Add new column(s) to DataFrame with calculated values.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "column_name": {
+              "type": "string",
+              "description": "Name of new column"
+            },
+            "expression": {
+              "type": "string",
+              "description": "Expression or value for new column"
+            }
+          },
+          "required": [
+            "column_name",
+            "expression"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_drop",
+        "description": "[PANDAS] Drop columns or rows from DataFrame based on labels. USE WHEN: removing data columns/rows by name or condition. FAST FOR: bulk removal of thousands of rows/columns. More efficient than openpyxl_worksheet_delete for data operations.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "labels": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "Column or row labels to drop"
+            },
+            "axis": {
+              "type": "integer",
+              "description": "0 for rows, 1 for columns",
+              "default": 1
+            }
+          },
+          "required": [
+            "labels"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_rename",
+        "description": "[PANDAS] Rename DataFrame columns or index.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "columns": {
+              "type": "object",
+              "description": "Dictionary mapping old names to new names"
+            }
+          },
+          "required": [
+            "columns"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_fillna",
+        "description": "[PANDAS] Fill missing values in DataFrame.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "value": {
+              "type": [
+                "number",
+                "string",
+                "object",
+                "null"
+              ],
+              "description": "Value to use for filling"
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Method for filling ('ffill', 'bfill')"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_describe",
+        "description": "[PANDAS] Generate descriptive statistics summary of DataFrame.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "include": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Data types to include ('all', 'number', 'object')"
+            },
+            "percentiles": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Percentiles to include (default [.25, .5, .75])"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_corr",
+        "description": "[PANDAS] Compute correlation matrix between numeric columns.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "method": {
+              "type": "string",
+              "description": "Correlation method ('pearson', 'kendall', 'spearman')",
+              "default": "pearson"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_value_counts",
+        "description": "[PANDAS] Count unique values in a column (similar to Excel COUNTIF).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "column": {
+              "type": "string",
+              "description": "Column name to count values"
+            },
+            "normalize": {
+              "type": "boolean",
+              "description": "Return proportions instead of counts",
+              "default": false
+            },
+            "dropna": {
+              "type": "boolean",
+              "description": "Exclude NaN values",
+              "default": true
+            }
+          },
+          "required": [
+            "column"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_pivot",
+        "description": "[PANDAS] Reshape data using pivot (simpler than pivot_table, no aggregation).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "index": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "Column(s) to use as new index"
+            },
+            "columns": {
+              "type": "string",
+              "description": "Column to use for new columns"
+            },
+            "values": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to use for values"
+            }
+          },
+          "required": [
+            "columns"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_melt",
+        "description": "[PANDAS] Unpivot DataFrame from wide to long format (opposite of pivot).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "id_vars": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to use as ID variables"
+            },
+            "value_vars": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Column(s) to unpivot"
+            },
+            "var_name": {
+              "type": "string",
+              "description": "Name for variable column",
+              "default": "variable"
+            },
+            "value_name": {
+              "type": "string",
+              "description": "Name for value column",
+              "default": "value"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_stack",
+        "description": "[PANDAS] Stack columns into rows, creating a multi-level index.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "level": {
+              "type": [
+                "integer",
+                "string",
+                "array"
+              ],
+              "description": "Level(s) to stack",
+              "default": -1
+            },
+            "dropna": {
+              "type": "boolean",
+              "description": "Drop rows with missing values",
+              "default": true
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_dataframe_create",
+        "description": "[PANDAS] Create a new pandas DataFrame from data.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": [
+                "array",
+                "object"
+              ],
+              "description": "Data for DataFrame (dict, list of lists, etc.)"
+            },
+            "columns": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Column names"
+            },
+            "index": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Row index labels"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_concat",
+        "description": "[PANDAS] Concatenate multiple DataFrames along rows or columns.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "objs": {
+              "type": "array",
+              "description": "List of DataFrame names/IDs to concatenate"
+            },
+            "axis": {
+              "type": "integer",
+              "description": "0 to concat rows, 1 to concat columns",
+              "default": 0
+            },
+            "ignore_index": {
+              "type": "boolean",
+              "description": "Reset index after concatenation",
+              "default": false
+            }
+          },
+          "required": [
+            "objs"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_info",
+        "description": "[PANDAS] Get concise summary of DataFrame including data types and memory usage.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_shape",
+        "description": "[PANDAS] Get dimensions of DataFrame (rows, columns).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_head",
+        "description": "[PANDAS] Get first n rows of DataFrame.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "n": {
+              "type": "integer",
+              "description": "Number of rows to return",
+              "default": 5
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_sample",
+        "description": "[PANDAS] Get random sample of rows from DataFrame.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "n": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of rows to sample"
+            },
+            "frac": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Fraction of rows to sample"
+            },
+            "random_state": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Random seed for reproducibility"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_to_csv",
+        "description": "[PANDAS] Export DataFrame to CSV file.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of DataFrame to use (e.g., \"df_1\"). If null, uses the last active DataFrame."
+            },
+            "path_or_buf": {
+              "type": "string",
+              "description": "File path to write CSV"
+            },
+            "index": {
+              "type": "boolean",
+              "description": "Write row index",
+              "default": true
+            },
+            "sep": {
+              "type": "string",
+              "description": "Field delimiter",
+              "default": ","
+            }
+          },
+          "required": [
+            "path_or_buf"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_list_dataframes",
+        "description": "[PANDAS] List all DataFrames currently in memory with their IDs and shapes. USE WHEN: need to see available DataFrames, check what data has been loaded, or understand current pandas state. Returns dictionary of DataFrame IDs with their shapes and column info.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_get_active",
+        "description": "[PANDAS] Get information about the currently active DataFrame. USE WHEN: need to check the active DataFrame's shape, columns, or sample data before operations. Returns active DataFrame ID, shape, columns, and first 5 rows.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pandas_set_active",
+        "description": "[PANDAS] Set a specific DataFrame as the active one. USE WHEN: you need to switch between DataFrames, especially before operations that don't specify dataframe_id. IMPORTANT: Many tools use the active DataFrame if dataframe_id is not specified.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": "string",
+              "description": "ID of DataFrame to make active (e.g., 'df_1', 'df_2'). Use pandas_list_dataframes to see available IDs."
+            }
+          },
+          "required": [
+            "dataframe_id"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pdf_load",
+        "description": "[PDF] Load PDF file into memory for reading and extraction. Returns pdf_id that you use for all subsequent PDF operations. USE WHEN: need to extract text or tables from PDF documents (10-Ks, investor presentations, reports). Validates file exists and is readable. After loading, use pdf_extract_text for text or pdf_to_dataframe for tables.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filepath": {
+              "type": "string",
+              "description": "Path to PDF file (absolute or relative)"
+            }
+          },
+          "required": [
+            "filepath"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pdf_extract_text",
+        "description": "[PDF] Extract text content from PDF pages. USE WHEN: need to read financial narratives, guidance, or any text from PDFs. Can extract single page, page range, or entire document. Returns plain text that you can search, parse, or analyze. Examples: extract management discussion, find key metrics, read footnotes.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pdf_id": {
+              "type": "string",
+              "description": "PDF ID from pdf_load (e.g., 'pdf_1')"
+            },
+            "page_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Specific page to extract (1-based). Overrides start/end if provided."
+            },
+            "start_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Starting page for range extraction (1-based, inclusive)"
+            },
+            "end_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Ending page for range extraction (1-based, inclusive)"
+            }
+          },
+          "required": [
+            "pdf_id"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pdf_to_dataframe",
+        "description": "[PDF] Extract table from PDF and convert directly to pandas DataFrame. THE KEY BRIDGE TOOL for PDF \u2192 Excel workflows. USE WHEN: PDF contains financial data tables (balance sheets, income statements, metrics). Automatically detects tables on page, converts to structured DataFrame that you can manipulate with pandas tools, then write to Excel. WORKFLOW: pdf_load \u2192 pdf_to_dataframe \u2192 pandas operations \u2192 pandas_to_excel \u2192 openpyxl formatting \u2192 save. Returns dataframe_id for use with pandas tools.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pdf_id": {
+              "type": "string",
+              "description": "PDF ID from pdf_load (e.g., 'pdf_1')"
+            },
+            "page_number": {
+              "type": "integer",
+              "description": "Page containing table (1-based)"
+            },
+            "table_index": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which table on page (0-based). If null, extracts all tables on page as separate DataFrames."
+            }
+          },
+          "required": [
+            "pdf_id",
+            "page_number"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pdf_get_metadata",
+        "description": "[PDF] Get metadata about loaded PDF. USE WHEN: need to check page count before extraction, verify correct file loaded, or get file information. Returns page count, filename, filepath, and preview of first page.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pdf_id": {
+              "type": "string",
+              "description": "PDF ID from pdf_load (e.g., 'pdf_1')"
+            }
+          },
+          "required": [
+            "pdf_id"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pdf_close",
+        "description": "[PDF] Close and unload PDF from memory. USE WHEN: done with PDF to free memory. Not strictly necessary as PDFs auto-close on system_reset, but good practice for large files.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pdf_id": {
+              "type": "string",
+              "description": "PDF ID to close (e.g., 'pdf_1')"
+            }
+          },
+          "required": [
+            "pdf_id"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "pdf_list_pdfs",
+        "description": "[PDF] List all currently loaded PDFs with their IDs and page counts. USE WHEN: need to see what PDFs are in memory, find pdf_id for operations, or check current PDF state. Returns list of all loaded PDFs.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "bridge_pandas_to_openpyxl",
+        "description": "[BRIDGE] Transfer pandas DataFrame to openpyxl workbook for formatting. Creates/replaces worksheet with DataFrame data. \u26a0\ufe0f CRITICAL REQUIREMENT: pandas DataFrame must exist (specify dataframe_id). \u26a0\ufe0f STATE: Creates NEW workbook in memory if none exists, or adds sheet to existing workbook. \u26a0\ufe0f DOES NOT save automatically - call openpyxl_workbook_save after formatting. USE WHEN: pandas analysis complete, ready to add formatting/charts. WORKFLOW: pandas operations \u2192 this tool \u2192 apply formatting \u2192 save.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dataframe_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DataFrame ID to transfer (uses last if not specified)"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "bridge_openpyxl_to_pandas",
+        "description": "[BRIDGE] Transfer data from openpyxl to pandas with formula calculation. \u26a0\ufe0f MANDATORY REQUIREMENT: You MUST call openpyxl_workbook_save BEFORE this tool. The bridge will REFUSE to run if there are unsaved changes. \u26a0\ufe0f WHY SAVE FIRST: This tool uses Excel to calculate formulas, which breaks the file handle. If you don't save first, ALL your changes will be LOST. \u26a0\ufe0f ENFORCED WORKFLOW: 1) Make openpyxl changes, 2) openpyxl_workbook_save (REQUIRED), 3) bridge_openpyxl_to_pandas, 4) pandas analysis. After bridge completes, openpyxl workbook is automatically reloaded from disk with a fresh handle - safe to continue. The bridge returns an error if you skip the save step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sheet_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Sheet to read (uses active if not specified)"
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "bridge_sync_file",
+        "description": "[BRIDGE] Synchronize changes between pandas and openpyxl through a file. USE WHEN: both libraries need to work on the same file sequentially.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filepath": {
+              "type": "string",
+              "description": "Path to Excel file for synchronization"
+            },
+            "direction": {
+              "type": "string",
+              "description": "Direction: 'pandas_to_openpyxl' or 'openpyxl_to_pandas'",
+              "enum": [
+                "pandas_to_openpyxl",
+                "openpyxl_to_pandas"
+              ]
+            }
+          },
+          "required": [
+            "filepath",
+            "direction"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "system_get_state",
+        "description": "[SYSTEM] Get complete state of both openpyxl and pandas executors. Shows all DataFrames, workbooks, charts, and writer_ids. USE WHEN: debugging, checking what's loaded, understanding current state.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "system_reset",
+        "description": "[SYSTEM] Reset all state - closes files, clears DataFrames and workbooks. USE WHEN: starting fresh task, resolving file conflicts, or cleaning up. WARNING: All unsaved work will be lost.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "confirm": {
+              "type": "boolean",
+              "description": "Must be true to confirm reset"
+            }
+          },
+          "required": [
+            "confirm"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "system_close_files",
+        "description": "[SYSTEM] Close all open file handles to prevent conflicts. Closes ExcelWriters and workbooks. USE WHEN: switching between pandas and openpyxl on same file.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    }
+  ]
+}
